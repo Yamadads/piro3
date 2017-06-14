@@ -12,7 +12,7 @@ def get_images_names_list(images_path, labels_path):
 
 
 def get_image(path):
-    image = data.imread(path)
+    image = data.imread(path, True)
     return image
 
 
