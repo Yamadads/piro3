@@ -1,6 +1,8 @@
 import Model
 import DataLoader
 import numpy as np
+import scipy.misc
+import progressbar
 
 
 def get_patch_by_center(input_image, x, y, half_window_size):
@@ -21,11 +23,18 @@ def roads(image):
     print("model initiated")
     result = np.zeros((len(image), len(image[0])))
 
-    for i in range(half_window_size, len(image) - 1 - half_window_size):
-        for j in range(half_window_size, len(image[0]) - 1 - half_window_size):
-            patch = get_patch_by_center(image, i, j, half_window_size)
+    i_start = half_window_size
+    i_end = len(image) - 1 - half_window_size
+    j_start = half_window_size
+    j_end = len(image[0]) - 1 - half_window_size
+    with progressbar.ProgressBar(max_value=(i_end - i_start) * (j_end - j_start)) as bar:
+        for i in range(i_start, i_end):
+            for j in range(j_start, j_end):
+                patch = get_patch_by_center(image, i, j, half_window_size)
+                predicted_value = model.model.predict(patch)
+                result[i][j] = predicted_value[0][0][0]
 
-            print('patch {1}\n{0}\n{1}'.format(patch, ''.join(['=' for i in range(30)])))
-            predicted_value = model.model.predict(patch)
-            result[i][j] = predicted_value[0][0][0]
+                bar.update(i * (i_start - i_end) + j)
+
+    scipy.misc.imsave('test_result', result)
     return result
