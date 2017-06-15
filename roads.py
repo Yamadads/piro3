@@ -53,7 +53,7 @@ def roads(image):
     predict_time = 0
     patch_time = 0
 
-    with ProgressBar(max_value=(i_end - i_start) * (j_end - j_start)) as bar:
+    with ProgressBar(max_value=(i_end - i_start + 1) * (j_end - j_start + 1)) as bar:
         for i in range(i_start, i_end):
             for j in range(j_start, j_end):
                 patch_time_start = time.clock()
