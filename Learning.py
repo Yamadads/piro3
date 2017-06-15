@@ -33,11 +33,11 @@ def main():
     model_name = "net_1"
     model_weights_name = "net_1_weights_1"
     window_size = 31  # must be odd
-    patch_size = 150
-    start = 0
-    stop = 1
+    patch_size = 3000
+    start = 1
+    stop = 11
     batch_size = 30
-    epochs = 1
+    epochs = 3
 
     learn(learning_files_path, learning_labels_path, window_size, patch_size, start, stop, batch_size, epochs,
           model_name,
