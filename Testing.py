@@ -1,5 +1,9 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import DataLoader
 import roads
+
+
 
 learning_files_path = './pictures/'
 learning_labels_path = './labels/'
