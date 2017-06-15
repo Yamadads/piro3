@@ -1,9 +1,11 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 from keras.models import Sequential
 from keras.models import model_from_json
 from keras.layers import Conv2DTranspose, Conv2D, Dropout
 from sklearn.utils import shuffle
-import os
 import numpy as np
+
 
 
 class Model:
@@ -23,15 +25,15 @@ class Model:
             Conv2D(60, kernel_size=kernel_size, input_shape=input_shape, padding=padding, strides=(1, 1),
                    activation=activation))
         self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(50, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
+        #self.model.add(Conv2D(50, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
         # self.model.add(MaxPooling2D(pool_size=self.pool_size))
-        self.model.add(Conv2D(40, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
+        #self.model.add(Conv2D(40, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
         self.model.add(Dropout(0.2))
-        self.model.add(
-            Conv2DTranspose(40, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
+        #self.model.add(
+        #    Conv2DTranspose(40, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
         # self.model.add(UpSampling2D(size=self.pool_size))
-        self.model.add(
-            Conv2DTranspose(50, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
+        #self.model.add(
+        #    Conv2DTranspose(50, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
         self.model.add(
             Conv2DTranspose(60, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
         self.model.add(

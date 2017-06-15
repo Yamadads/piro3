@@ -45,11 +45,11 @@ def main():
     learning_labels_path = 'D:/piro/piro3/labels/'
     model_name = "net_1"
     model_weights_name = "net_1_weights_1"
-    trainig_set_size = 10
+    trainig_set_size = 6
     start = 0
-    stop = 20
-    batch_size = 5
-    epochs = 2
+    stop = 12
+    batch_size = 3
+    epochs = 1
 
     learn(learning_files_path, learning_labels_path, trainig_set_size, start, stop, batch_size, epochs, model_name, model_weights_name)
 
