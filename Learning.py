@@ -28,8 +28,8 @@ def learn(images_dir, labels_dir, window_size, patch_size, start_learning_exampl
 
 def main():
     learning_set_count = 1108
-    learning_files_path = 'D:/piro/piro3/pictures/'
-    learning_labels_path = 'D:/piro/piro3/labels/'
+    learning_files_path = './pictures/'
+    learning_labels_path = './labels/'
     model_name = "net_1"
     model_weights_name = "net_1_weights_1"
     window_size = 31  # must be odd
