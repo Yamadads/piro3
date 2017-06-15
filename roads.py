@@ -34,7 +34,7 @@ def roads(image):
                 predicted_value = model.model.predict(patch)
                 result[i][j] = predicted_value[0][0][0]
 
-                bar.update(i * (i_start - i_end) + j)
+                bar.update((i - i_start) * (j_end - j_start) + j)
 
     scipy.misc.imsave('test_result', result)
     return result
