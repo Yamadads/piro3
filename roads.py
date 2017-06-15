@@ -15,6 +15,7 @@ def roads(image):
         for j in range(half_window_size, len(image[0]) - 1 - half_window_size):
             patch = image[i - half_window_size:i + half_window_size + 1,
                     j - half_window_size:j + half_window_size + 1]
+            print(patch)
             predicted_value = model.model.predict(patch)
             result[i][j] = predicted_value[0][0][0]
     output = model.model.predict(image)
