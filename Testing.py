@@ -1,8 +1,8 @@
 import DataLoader
 import roads
 
-learning_files_path = 'D:/piro/piro3/pictures/'
-learning_labels_path = 'D:/piro/piro3/labels/'
+learning_files_path = './pictures/'
+learning_labels_path = './labels/'
 
 
 def display_first_test():
