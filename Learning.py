@@ -34,8 +34,8 @@ def main():
     model_weights_name = "net_1_weights_1"
     window_size = 31  # must be odd
     patch_size = 3000
-    start = 1
-    stop = 11
+    start = 0
+    stop = 1
     batch_size = 30
     epochs = 3
 
