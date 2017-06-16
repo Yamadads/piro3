@@ -15,11 +15,7 @@ def get_images_names_list(images_path, labels_path):
 
 
 def get_image(path):
-    needed_channels = 3
     image = data.imread(path, False)
-    # if len(image.shape) != needed_channels:
-    #     return_image = np.resize(image, (image.shape[0], image.shape[1], 1))
-    #     return return_image
     return image
 
 
