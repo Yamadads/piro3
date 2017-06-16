@@ -1,58 +1,68 @@
 import Model
 import numpy as np
 import scipy.misc
+import DataLoader
+import FilteringModel
+import ExactModel
 
 
-def get_patch_by_center(input_image, x, y, half_window_size):
-    return np.array([input_image[x - half_window_size:x + half_window_size + 1,
-                     y - half_window_size:y + half_window_size + 1]])
+def get_patch(input_image, i, j, window_size, decision_size, ):
+    window_size_half = int(window_size / 2)
+    decision_size_half = int(decision_size / 2)
+    patch = np.ones((window_size, window_size, 3))
+    p_x = -1
+    p_y = -1
+    for x in range(i - (window_size_half - decision_size_half),
+                   i - (window_size_half - decision_size_half) + window_size):
+        y = -1
+        x += 1
+        for y in range(j - (window_size_half - decision_size_half),
+                       j - (window_size_half - decision_size_half) + window_size):
+            y += 1
+            if (x >= 0 and x < len(input_image)) and (y >= 0 and y < len(input_image)):
+                patch[p_x][p_y] = input_image[x][y]
+
+    return np.array([patch])
 
 
 def roads(image):
-    #model 
+    # model
     exact_model_name = "exact_net_1"
-    exact_model_weights_name = "exact_net_1_weights_1"
+    exact_model_weights_name = "exact_net_1_weights_2"
+    exact_window_size = 12
+    exact_window_decision_kernel_size = 2
+
     filtering_model_name = "filter_net_1"
     filtering_model_weights_name = "filter_net_1_weights_1"
+    filtering_window_size = 20
 
+    filtering_image = DataLoader.get_compressed_image(image, 200)
+    filtering_image = filtering_image / 255
 
-    window_size = 31
-    half_window_size = int(window_size / 2)
-    model = Model.Model()
-    print("model before init")
-    model.init_model()
-    print("model init")
-    model.load_weights(model_weights_name)
-    print("model initiated")
-    result = np.zeros((len(image), len(image[0])))
+    exact_image = DataLoader.get_compressed_image(image, 400)
+    exact_image = exact_image / 255
 
-    part = 1
+    # filter_model = FilteringModel.FilteringModel()
+    # filter_model.load_model(filtering_model_name, filtering_model_weights_name)
+    # filter_result = np.zeros((len(filtering_image), len(filtering_image[0])))
 
-    i_start = half_window_size
-    i_end = int((len(image) - 1 - half_window_size) * part)
-    j_start = half_window_size
-    j_end = int((len(image[0]) - 1 - half_window_size) * part)
+    exact_model = ExactModel.Model()
+    exact_model.init_model()
+    exact_model.load_weights(exact_model_weights_name)
+    exact_result = np.zeros((len(exact_image), len(exact_image)))
 
-    predict_time = 0
-    patch_time = 0
+    print('predict')
+    for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
+        # print(i)
+        for j in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
+            patch = get_patch(exact_image, i, j, exact_window_size, exact_window_decision_kernel_size)
+            res = exact_model.model.predict(patch)[0][0][0]
+            for x in range(exact_window_decision_kernel_size):
+                for y in range(exact_window_decision_kernel_size):
+                    dec = 1.0 if res[0] > 0.5 else 0.0
+                    # print(res[0])
+                    # print(dec)
+                    exact_result[x + i][y + j] = dec
+    exact_result = exact_result * 255
 
-    with ProgressBar(max_value=(i_end - i_start + 1) * (j_end - j_start + 1)) as bar:
-        for i in range(i_start, i_end):
-            for j in range(j_start, j_end):
-                patch_time_start = time.clock()
-                patch = get_patch_by_center(image, i, j, half_window_size)
-                patch_time += time.clock() - patch_time_start
-
-                predict_time_start = time.clock()
-                predicted_value = model.model.predict(patch)
-                predict_time += time.clock() - predict_time_start
-
-                result[i][j] = predicted_value[0][0][0]
-
-                bar.update((i - i_start) * (j_end - j_start) + j)
-
-    print('predict {0}\npatch   {1}'.format(predict_time, patch_time))
-
-    # scipy.misc.imsave('test_result', result)
-
-    return result
+    return exact_result
