@@ -22,23 +22,21 @@ def get_image(path):
     return image
 
 
-def split_image(picture_window_size, input_image, output_image, set_size):
-    half_window_size = int(picture_window_size/2)
+def split_image(picture_window_size, center_size, input_image, output_image, set_size):
+    half_window_size = int(picture_window_size / 2)
+    half_center_size = int(center_size / 2)
+    center_start_pos = half_window_size - half_center_size
     patches = []
     labels = []
-    #all patches- too big
-    # for i in range(half_window_size, len(input_image) - 1 - half_window_size):
-    #     for j in range(half_window_size , len(input_image[0]) - 1 - half_window_size):
-    #         patch = input_image[i-half_window_size:i+half_window_size+1, j-half_window_size:j+half_window_size+1]
-    #         label = np.resize(output_image[i][j], (1,1,1))
-    #         patches.append(patch)
-    #         labels.append(label)
     for x in range(set_size):
-        i = random.randint(half_window_size, len(input_image) - 1 - half_window_size)
-        j = random.randint(half_window_size, len(input_image[0]) - 1 - half_window_size)
-        patch = input_image[i - half_window_size:i + half_window_size + 1,
-                j - half_window_size:j + half_window_size + 1]
-        label = np.resize(output_image[i][j], (1, 1, 1))
+        i = random.randint(len(input_image) - picture_window_size)
+        j = random.randint(len(input_image) - picture_window_size)
+        patch = input_image[i:i + picture_window_size, j + picture_window_size]
+        center = output_image[
+                 i + center_start_pos:i + center_start_pos + center_size,
+                 i + center_start_pos:i + center_start_pos + center_size]
+        label_value = 1.0 if np.average(center)>0.5 else 0.0
+        label = np.resize(label_value, (1, 1, 1))
         patches.append(patch)
         labels.append(label)
     return np.array(patches), np.array(labels)
