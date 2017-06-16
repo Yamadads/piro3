@@ -13,27 +13,27 @@ class FilteringModel:
 
     def init_model(self):
         pool_size = (2, 2)
-        input_shape = (11, 11, 3)
+        input_shape = (20, 20, 3)
         kernel_size = (3, 3)
         padding = 'valid'
         activation = 'relu'
 
         self.model = Sequential()
         self.model.add(
-            Conv2D(50, kernel_size=kernel_size, input_shape=input_shape, padding=padding, strides=(1, 1),
+            Conv2D(50, kernel_size=(5, 5), input_shape=input_shape, padding=padding, strides=(1, 1),
                    activation=activation))
         self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(40, kernel_size=kernel_size, padding=padding, strides=(1, 1), activation=activation))
+        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
         self.model.add(MaxPooling2D(pool_size=pool_size, dim_ordering="tf"))
-        self.model.add(Conv2D(40, kernel_size=(2, 2), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(10, kernel_size=(2, 2), padding=padding, strides=(1, 1), activation=activation))
+        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
+        self.model.add(Dropout(0.1))
+        self.model.add(Conv2D(20, kernel_size=(3, 3), padding=padding, strides=(1, 1), activation=activation))
         self.model.add(Dense(1, activation='sigmoid'))
 
         self.model.compile(optimizer='Adam', loss='mean_squared_error')
 
     def train_model(self, learning_pictures, learning_labels, batch_size, epochs):
-        labels = learning_labels / 255
+        labels = learning_labels
         pictures = learning_pictures / 255
         pictures, labels = shuffle(pictures, labels)
         self.model.fit(pictures, labels, batch_size, epochs, 1, validation_split=0.1, shuffle=True)
