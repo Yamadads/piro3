@@ -20,11 +20,8 @@ def learn(images_dir, labels_dir, compressed_image_size, decision_kernel_size, w
     for i in range(start_learning_example_number, stop_learning_example_number):
         print("pic num: {0}, name: {1}".format(i, data[i][0]))
         image = DataLoader.get_image(data[i][1])
-        DataLoader.show_image(image)
         compressed_image = DataLoader.get_compressed_image(image, compressed_image_size)
-        DataLoader.show_image(compressed_image)
         label = DataLoader.get_compressed_image(DataLoader.get_image(data[i][2]), compressed_image_size)
-        DataLoader.show_image(label)
         train_pictures, labels = DataLoader.split_image(window_size, decision_kernel_size, compressed_image, label, patch_size)
         model.train_model(train_pictures, labels, batch_size, epochs)
         model.save_model(model_name, model_weights_name)
