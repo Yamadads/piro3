@@ -38,13 +38,13 @@ def split_image(picture_window_size, input_image, output_image, set_size):
         j = random.randint(half_window_size, len(input_image[0]) - 1 - half_window_size)
 
         patch = input_image[
-                i - half_window_size:i + half_window_size + 1,
-                j - half_window_size:j + half_window_size + 1
+                i - half_window_size:i + half_window_size,
+                j - half_window_size:j + half_window_size
         ]
 
         label_patch = output_image[
-                i - half_window_size:i + half_window_size + 1,
-                j - half_window_size:j + half_window_size + 1
+                i - half_window_size:i + half_window_size,
+                j - half_window_size:j + half_window_size
         ]
 
         label = np.resize([1 if np.sum(label_patch) > 0 else 0], (1, 1, 1))

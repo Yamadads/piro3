@@ -32,7 +32,7 @@ def main():
     learning_labels_path = './labels/'
     model_name = "filter_net_1"
     model_weights_name = "filter_net_1_weights_1"
-    window_size = 11  # must be odd
+    window_size = 20  # must be odd
     patches_count = 3000
     start = 0
     stop = 1
