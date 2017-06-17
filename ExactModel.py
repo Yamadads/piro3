@@ -3,8 +3,9 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from keras.models import Sequential
 from keras.models import model_from_json
-from keras.layers import Conv2D, Dropout, Dense
+from keras.layers import Conv2D, Dropout, Dense, Flatten, MaxPooling2D
 from sklearn.utils import shuffle
+from keras import optimizers
 
 
 class Model:
@@ -12,27 +13,29 @@ class Model:
         self.model = Sequential()
 
     def init_model(self):
-        input_shape = (12, 12, 3)
+        input_shape = (20, 20, 3)
         padding = 'valid'
         activation = 'relu'
 
         self.model = Sequential()
-        self.model.add(Conv2D(30, kernel_size=(3, 3), input_shape=input_shape, padding=padding, strides=(1, 1),
+        self.model.add(Conv2D(60, kernel_size=(5, 5), input_shape=input_shape, padding=padding, strides=(1, 1),
                               activation=activation))
-        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(Dense(1, activation='sigmoid'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        self.model.add(Flatten())
+        self.model.add(Dense(200, activation='relu'))
+        self.model.add(Dense(200, activation='relu'))
+        self.model.add(Dense(50, activation='relu'))
+        self.model.add(Dense(50, activation='relu'))
+        self.model.add(Dense(1, activation='softmax'))
 
-        self.model.compile(optimizer='Adam', loss='mean_squared_error')
+        # sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.5)
+        self.model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=["accuracy"])
+        # self.model.compile(optimizer='Adam', loss='mean_squared_error')
 
     def train_model(self, learning_pictures, learning_labels, batch_size, epochs):
-        labels = learning_labels / 255
         pictures = learning_pictures / 255
-        pictures, labels = shuffle(pictures, labels)
-        self.model.fit(pictures, labels, batch_size, epochs, 1, validation_split=0.1, shuffle=True)
+        # pictures, labels = shuffle(pictures, learning_labels)
+        self.model.fit(pictures, learning_labels, batch_size, epochs, 1, validation_split=0.1, shuffle=False)
 
     def save_model(self, architecture_filename, weights_filename):
         model_json = self.model.to_json()
@@ -57,3 +60,5 @@ class Model:
             self.model.load_weights(weights_filename)
         else:
             print('Model weights cannot be loaded')
+        # sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.5)
+        self.model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=["accuracy"])

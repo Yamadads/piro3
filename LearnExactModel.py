@@ -32,15 +32,15 @@ def main():
     learning_files_path = './pictures/'
     learning_labels_path = './labels/'
     model_name = "exact_net_1"
-    model_weights_name = "exact_net_1_weights_1"
-    window_size = 12
+    model_weights_name = "exact_net_1_weights_17"
+    window_size = 20
     decision_kernel_size = 2
     patch_size = 10000
     start = 0
     stop = 1000
-    batch_size = 30
-    epochs = 4
-    compressed_image_size = 400
+    batch_size = 10
+    epochs = 5
+    compressed_image_size = 600
 
     learn(learning_files_path, learning_labels_path, compressed_image_size, decision_kernel_size, window_size, patch_size, start, stop, batch_size, epochs,
           model_name,
