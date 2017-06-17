@@ -2,35 +2,41 @@ import os
 
 from keras.models import Sequential
 from keras.models import model_from_json
-from keras.layers import Conv2D, Dropout, MaxPooling2D, Dense
+from keras.layers import Conv2D, Dropout, MaxPooling2D, Dense, Flatten
 from sklearn.utils import shuffle
-import numpy as np
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+from keras.optimizers import sgd
+
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 class FilteringModel:
     def __init__(self):
         self.model = Sequential()
 
     def init_model(self):
-        pool_size = (2, 2)
-        input_shape = (20, 20, 3)
-        kernel_size = (3, 3)
-        padding = 'valid'
-        activation = 'relu'
 
         self.model = Sequential()
-        self.model.add(
-            Conv2D(50, kernel_size=(5, 5), input_shape=input_shape, padding=padding, strides=(1, 1),
-                   activation=activation))
-        self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(MaxPooling2D(pool_size=pool_size, dim_ordering="tf"))
-        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
-        self.model.add(Dropout(0.1))
-        self.model.add(Conv2D(20, kernel_size=(3, 3), padding=padding, strides=(1, 1), activation=activation))
+
+        self.model.add(Conv2D(32, kernel_size=(3, 3), input_shape=(20, 20, 3), activation='relu'))
+        self.model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
+        self.model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
+        self.model.add(MaxPooling2D(data_format='channels_last', pool_size=(2, 2)))
+        self.model.add(Dropout(0.15))
+
+        self.model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+        self.model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+        self.model.add(MaxPooling2D(data_format='channels_last', pool_size=(2, 2)))
+        self.model.add(Dropout(0.15))
+
+        # self.model.add(Flatten())
+
+        # self.model.add(Dense(128, activation='relu'))
+        # self.model.add(Dropout(0.25))
         self.model.add(Dense(1, activation='sigmoid'))
 
-        self.model.compile(optimizer='Adam', loss='mean_squared_error')
+        opt = sgd(lr=0.05, momentum=0.9, decay=1e-6, nesterov=True)
+
+        self.model.compile(optimizer='Adam', loss='binary_crossentropy', metrics=['accuracy'])
 
     def train_model(self, learning_pictures, learning_labels, batch_size, epochs):
         labels = learning_labels
