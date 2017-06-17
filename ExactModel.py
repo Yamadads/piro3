@@ -17,13 +17,13 @@ class Model:
         activation = 'relu'
 
         self.model = Sequential()
-        self.model.add(Conv2D(20, kernel_size=(3, 3), input_shape=input_shape, padding=padding, strides=(1, 1),
+        self.model.add(Conv2D(30, kernel_size=(3, 3), input_shape=input_shape, padding=padding, strides=(1, 1),
                               activation=activation))
         self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
         self.model.add(Dropout(0.2))
         self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
         self.model.add(Dropout(0.2))
-        self.model.add(Conv2D(16, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
+        self.model.add(Conv2D(40, kernel_size=(4, 4), padding=padding, strides=(1, 1), activation=activation))
         self.model.add(Dense(1, activation='sigmoid'))
 
         self.model.compile(optimizer='Adam', loss='mean_squared_error')

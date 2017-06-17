@@ -33,6 +33,7 @@ def split_image(picture_window_size, center_size, input_image, output_image, set
                  i + center_start_pos:i + center_start_pos + center_size,
                  j + center_start_pos:j + center_start_pos + center_size]
         label_value = 1.0 if np.average(center) > 0.5 else 0.0
+        print(label_value)
         label = np.resize(label_value, (1, 1, 1))
         patches.append(patch)
         labels.append(label)
@@ -40,9 +41,7 @@ def split_image(picture_window_size, center_size, input_image, output_image, set
 
 
 def get_compressed_image(image, final_size):
-    zoom = final_size/len(image)
     compressed_image = scipy.misc.imresize(image, (final_size, final_size))
-    #compressed_image = scipy.ndimage.interpolation.zoom(image, zoom, order=3, mode='constant', cval=0.0, prefilter=True)
     return compressed_image
 
 

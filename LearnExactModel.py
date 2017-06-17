@@ -35,11 +35,11 @@ def main():
     model_weights_name = "exact_net_1_weights_1"
     window_size = 12
     decision_kernel_size = 2
-    patch_size = 3000
+    patch_size = 10000
     start = 0
-    stop = 1
+    stop = 1000
     batch_size = 30
-    epochs = 3
+    epochs = 4
     compressed_image_size = 400
 
     learn(learning_files_path, learning_labels_path, compressed_image_size, decision_kernel_size, window_size, patch_size, start, stop, batch_size, epochs,
