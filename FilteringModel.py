@@ -36,7 +36,7 @@ class FilteringModel:
 
         opt = sgd(lr=0.05, momentum=0.9, decay=1e-6, nesterov=True)
 
-        self.model.compile(optimizer='Adam', loss='mean_squared_error', metrics=['accuracy'])
+        self.model.compile(optimizer='Adam', loss='binary_crossentropy', metrics=['accuracy'])
 
     def train_model(self, learning_pictures, learning_labels, batch_size, epochs):
         labels = learning_labels
