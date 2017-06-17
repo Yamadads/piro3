@@ -34,7 +34,7 @@ def split_image(picture_window_size, center_size, input_image, output_image, set
                         j - half_window_size:j - half_window_size + picture_window_size]
                 patches.append(patch)
                 label = 1
-                labels.append(label)
+                labels.append(to_categorical(label, 2)[0])
             if len(labels) >= int(set_size / 2):
                 break
 
@@ -48,7 +48,7 @@ def split_image(picture_window_size, center_size, input_image, output_image, set
                 patch = input_image[i:i + picture_window_size, j:j + picture_window_size]
                 patches.append(patch)
                 label = 0
-                labels.append(label)
+                labels.append(to_categorical(label, 2)[0])
     s_patches, s_labels = shuffle(patches, labels)
     return np.array(s_patches), np.array(s_labels)
 

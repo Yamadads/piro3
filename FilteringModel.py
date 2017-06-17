@@ -42,6 +42,7 @@ class FilteringModel:
         labels = learning_labels
         pictures = learning_pictures / 255
         pictures, labels = shuffle(pictures, labels)
+        print(labels)
         self.model.fit(pictures, labels, batch_size, epochs, 1, validation_split=0.1, shuffle=True)
 
     def save_model(self, architecture_filename, weights_filename):

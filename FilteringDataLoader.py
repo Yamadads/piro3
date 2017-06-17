@@ -1,7 +1,7 @@
 import os
 import random
 
-import cv2 as cv
+import scipy
 import numpy as np
 from PIL import Image
 from skimage import data
@@ -17,16 +17,21 @@ def get_images_names_list(images_path, labels_path):
 def get_image(path, compress_to_size):
     needed_channels = 3
     image = data.imread(path, False)
-    if len(image.shape) != needed_channels:
-        return_image = np.resize(image, (image.shape[0], image.shape[1], 1))
-        image = return_image
 
-    image2 = cv.resize(image, (compress_to_size, compress_to_size))
+    # image2 = cv.resize(image, (compress_to_size, compress_to_size))
+    image2 = get_compressed_image(image, compress_to_size)
+
+    if len(image2.shape) != needed_channels:
+        return_image = np.resize(image2, (image.shape[0], image.shape[1], 1))
+        image2 = return_image
 
     # show_image(image2)
 
     return image2
 
+def get_compressed_image(image, final_size):
+    compressed_image = scipy.misc.imresize(image, (final_size, final_size))
+    return compressed_image
 
 def split_image(picture_window_size, input_image, output_image, set_size):
     half_window_size = int(picture_window_size/2)

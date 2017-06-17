@@ -29,8 +29,8 @@ def get_patch(input_image, i, j, window_size, decision_size, ):
 def roads(image):
     # model
     exact_model_name = "exact_net_1"
-    exact_model_weights_name = "exact_net_1_weights_13"
-    exact_window_size = 16
+    exact_model_weights_name = "exact_net_1_weights_20"
+    exact_window_size = 20
     exact_window_decision_kernel_size = 2
 
     filtering_model_name = "filter_net_1"
@@ -40,7 +40,7 @@ def roads(image):
     filtering_image = DataLoader.get_compressed_image(image, 200)
     filtering_image = filtering_image / 255
 
-    exact_image = DataLoader.get_compressed_image(image, 500)
+    exact_image = DataLoader.get_compressed_image(image, 600)
     exact_image = exact_image / 255
 
     # filter_model = FilteringModel.FilteringModel()
@@ -58,9 +58,11 @@ def roads(image):
             patch = get_patch(exact_image, i, j, exact_window_size, exact_window_decision_kernel_size)
             res = exact_model.model.predict(patch)
             print(res)
+            dec = 1.0 if res[0] > 0.5 else 0.0
+            # print(dec)
             for x in range(exact_window_decision_kernel_size):
                 for y in range(exact_window_decision_kernel_size):
-                    dec = 1.0 if res[0] > 0.5 else 0.0
+
                     exact_result[x + i][y + j] = dec
     exact_result = exact_result * 255
 
