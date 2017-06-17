@@ -37,7 +37,7 @@ def main():
     decision_kernel_size = 2
     patch_size = 10000
     start = 0
-    stop = 100
+    stop = 1000
     batch_size = 128
     epochs = 12
     compressed_image_size = 600
