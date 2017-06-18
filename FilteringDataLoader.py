@@ -1,10 +1,11 @@
 import os
 import random
-
 import scipy
 import numpy as np
 from PIL import Image
 from skimage import data
+from sklearn.utils import shuffle
+from keras.utils.np_utils import to_categorical
 
 
 def get_images_names_list(images_path, labels_path):
@@ -29,36 +30,41 @@ def get_image(path, compress_to_size):
 
     return image2
 
+
 def get_compressed_image(image, final_size):
     compressed_image = scipy.misc.imresize(image, (final_size, final_size))
     return compressed_image
 
-def split_image(picture_window_size, input_image, output_image, set_size):
-    half_window_size = int(picture_window_size/2)
+
+def split_image(picture_window_size, input_image, output_image, patch_step):
+    half_window_size = int(picture_window_size / 2)
+
     patches = []
     labels = []
 
-    for x in range(set_size):
-        i = random.randint(half_window_size, len(input_image) - 1 - half_window_size)
-        j = random.randint(half_window_size, len(input_image[0]) - 1 - half_window_size)
+    for i in range(half_window_size, patch_step, len(input_image) - 1 - half_window_size):
+        for j in range(half_window_size, patch_step, len(input_image[0]) - 1 - half_window_size):
 
-        patch = input_image[
-                i - half_window_size:i + half_window_size,
-                j - half_window_size:j + half_window_size
-        ]
+            patch = input_image[
+                    i - half_window_size:i + half_window_size,
+                    j - half_window_size:j + half_window_size
+                    ]
 
-        label_patch = output_image[
-                i - half_window_size:i + half_window_size,
-                j - half_window_size:j + half_window_size
-        ]
+            patches.append(patch)
 
-        label = np.resize([1 if np.sum(label_patch) > 0 else 0], (1, 1, 1))
-        patches.append(patch)
-        labels.append(label)
+            label_patch = output_image[
+                          i - half_window_size:i + half_window_size,
+                          j - half_window_size:j + half_window_size
+                          ]
 
-    return np.array(patches), np.array(labels)
+            class_id = 1 if np.sum(label_patch) > 0 else 0
+
+            labels.append(to_categorical(class_id, 2)[0])
+
+    s_patches, s_labels = shuffle(patches, labels)
+    return np.array(s_patches), np.array(s_labels)
 
 
-def show_image(image):
+def show_image(image, title='PIRO_image'):
     im = Image.fromarray(image)
-    im.show()
+    im.show(title)
