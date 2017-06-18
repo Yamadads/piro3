@@ -6,7 +6,7 @@ import random
 from sklearn.feature_extraction import image
 import scipy
 from sklearn.utils import shuffle
-#from keras.utils.np_utils import to_categorical
+from keras.utils.np_utils import to_categorical
 
 
 def get_images_names_list(images_path, labels_path):
