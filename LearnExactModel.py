@@ -39,7 +39,7 @@ def main():
     start = 0
     stop = 1000
     batch_size = 128
-    epochs = 12
+    epochs = 5
     compressed_image_size = 600
 
     learn(learning_files_path, learning_labels_path, compressed_image_size, decision_kernel_size, window_size, patch_size, start, stop, batch_size, epochs,
