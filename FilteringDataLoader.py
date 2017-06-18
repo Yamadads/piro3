@@ -1,11 +1,11 @@
 import os
-import random
-import scipy
+
 import numpy as np
+import scipy
 from PIL import Image
+from keras.utils.np_utils import to_categorical
 from skimage import data
 from sklearn.utils import shuffle
-from keras.utils.np_utils import to_categorical
 
 
 def get_images_names_list(images_path, labels_path):
@@ -25,8 +25,6 @@ def get_image(path, compress_to_size):
     if len(image2.shape) != needed_channels:
         return_image = np.resize(image2, (image.shape[0], image.shape[1], 1))
         image2 = return_image
-
-    # show_image(image2)
 
     return image2
 

@@ -7,7 +7,6 @@ from keras.layers import Conv2D, Dropout, Dense, Flatten, MaxPooling2D
 from keras import optimizers
 from keras import losses
 import numpy as np
-from sklearn.utils import shuffle
 
 
 class Model:
