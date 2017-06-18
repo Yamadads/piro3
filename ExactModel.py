@@ -43,7 +43,7 @@ class Model:
 
     def train_model(self, learning_pictures, learning_labels, batch_size, epochs):
         pictures = learning_pictures / 255
-        pictures, labels = shuffle(pictures, learning_labels)
+        # pictures, labels = shuffle(pictures, learning_labels)
         self.model.fit(pictures, learning_labels, batch_size, epochs, 1, validation_split=0.1, shuffle=True)
 
     def save_model(self, architecture_filename, weights_filename):
