@@ -32,7 +32,6 @@ def get_filter_patches(image, filter_window_size):
     for i in range(0, len(image) - filter_window_size +1, filter_window_size):
         for j in range(0, len(image) - filter_window_size +1, filter_window_size):
             patch = image[i:i + filter_window_size, j:j + filter_window_size]
-            print(patch.shape)
             patches.append(patch)
     return np.array(patches)
 
@@ -63,7 +62,10 @@ def get_filter_result(compressed_image):
         for j in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
             idx += 1
             if results[idx][0] == 0 and results[idx][1] == 1:
-                filter_result[i:i + filtering_window_size, j:j + filtering_window_size] = 1
+                for x in range(60):
+                    for y in range(60):
+                        filter_result[x+i][y+j] = 1.0
+
     return filter_result
 
 def roads(image):
@@ -81,7 +83,8 @@ def roads(image):
     filtering_image = filtering_image / 255
 
     filtered_image = get_filter_result(filtering_image)
-    DataLoader.show_image(filtering_image)
+    to_show_filtered_image = filtered_image / 255
+    DataLoader.show_image(to_show_filtered_image)
 
     exact_model = ExactModel.Model()
     exact_model.init_model()
