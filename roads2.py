@@ -7,7 +7,7 @@ from  skimage.filters import median
 from skimage.morphology import erosion, dilation, opening, closing, white_tophat, opening
 
 
-def get_patch(input_image, i, j, window_size, decision_size, ):
+def get_exact_patch(input_image, i, j, window_size, decision_size, ):
     window_size_half = int(window_size / 2)
     decision_size_half = int(decision_size / 2)
     patch = np.ones((window_size, window_size, 3))
@@ -27,6 +27,45 @@ def get_patch(input_image, i, j, window_size, decision_size, ):
     return arr_patch
 
 
+def get_filter_patches(image, filter_window_size):
+    patches = []
+    for i in range(0, len(image) - filter_window_size +1, filter_window_size):
+        for j in range(0, len(image) - filter_window_size +1, filter_window_size):
+            patch = image[i:i + filter_window_size, j:j + filter_window_size]
+            print(patch.shape)
+            patches.append(patch)
+    return np.array(patches)
+
+
+def get_exact_patches(image, exact_window_size, exact_window_decision_kernel_size):
+    patches = []
+    for i in range(0, len(image) - exact_window_decision_kernel_size + 1, 2):
+        for j in range(0, len(image) - exact_window_decision_kernel_size + 1, 2):
+            patch = get_exact_patch(image, i, j, exact_window_size, exact_window_decision_kernel_size)
+            patches.append(patch)
+    patches = np.array(patches)
+    return patches
+
+def get_filter_result(compressed_image):
+    filtering_model_weights_name = "filter_net_1_weights_1"
+    filtering_window_size = 60
+
+    filter_model = FilteringModel.FilteringModel()
+    filter_model.init_model()
+    filter_model.load_weights(filtering_model_weights_name)
+    filter_result = np.zeros((len(compressed_image), len(compressed_image[0])))
+
+    filter_patches = get_filter_patches(compressed_image, filtering_window_size)
+    results = filter_model.model.predict(filter_patches)
+
+    idx = -1
+    for i in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
+        for j in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
+            idx += 1
+            if results[idx][0] == 0 and results[idx][1] == 1:
+                filter_result[i:i + filtering_window_size, j:j + filtering_window_size] = 1
+    return filter_result
+
 def roads(image):
     # model
     exact_model_name = "exact_net_1"
@@ -34,19 +73,15 @@ def roads(image):
     exact_window_size = 20
     exact_window_decision_kernel_size = 2
 
-    filtering_model_name = "filter_net_1"
-    filtering_model_weights_name = "filter_net_1_weights_1"
-    filtering_window_size = 20
-
-    filtering_image = DataLoader.get_compressed_image(image, 200)
-    filtering_image = filtering_image / 255
-
     exact_image = DataLoader.get_compressed_image(image, 600)
     exact_image = exact_image / 255
 
-    # filter_model = FilteringModel.FilteringModel()
-    # filter_model.load_model(filtering_model_name, filtering_model_weights_name)
-    # filter_result = np.zeros((len(filtering_image), len(filtering_image[0])))
+
+    filtering_image = DataLoader.get_compressed_image(image, 600)
+    filtering_image = filtering_image / 255
+
+    filtered_image = get_filter_result(filtering_image)
+    DataLoader.show_image(filtering_image)
 
     exact_model = ExactModel.Model()
     exact_model.init_model()
@@ -54,12 +89,7 @@ def roads(image):
     exact_result = np.zeros((len(exact_image), len(exact_image)), dtype=int)
 
     print('predict')
-    patches = []
-    for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
-        for j in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
-            patch = get_patch(exact_image, i, j, exact_window_size, exact_window_decision_kernel_size)
-            patches.append(patch)
-    patches = np.array(patches)
+    patches = get_exact_patches(exact_image, exact_window_size, exact_window_decision_kernel_size)
     res = exact_model.model.predict(patches)
     idx = -1
     for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
