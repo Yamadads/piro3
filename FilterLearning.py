@@ -41,9 +41,9 @@ def main():
     model_name = "filter_net_1"
     model_weights_name = "filter_net_1_weights_1"
     window_size = 60  # must be odd
-    start = 0
-    stop = 100
-    batch_size = 32
+    start = 100
+    stop = 800
+    batch_size = 64
     epochs = 4
 
     learn(learning_files_path, learning_labels_path, window_size, start, stop, batch_size, epochs,

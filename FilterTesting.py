@@ -21,24 +21,27 @@ def filter_testing(images_dir, labels_dir, window_size, start_testing_example_nu
     tn = 0
     fn = 0
 
-    for i in range(start_testing_example_number, stop_testing_example_number):
-        print("pic num: {0}, name: {1}".format(i, data[i][0]))
-        image = FilteringDataLoader.get_image(data[i][1], 600)
-        label = FilteringDataLoader.get_image(data[i][2], 600)
-        test_pictures, labels = FilteringDataLoader.split_image(window_size, [image], [label], 15)
-        results = model.model.predict(test_pictures)
+    image_batch = []
+    label_batch = []
 
-        for j in range(len(results)):
-            if results[j][0] == 1 and results[j][1] == 0:  # negative
-                if labels[j][0] == 1 and labels[j][1] == 0:
-                    tn += 1
-                else:
-                    fn += 1
-            else:  # positive
-                if labels[j][0] == 0 and labels[j][1] == 1:
-                    tp += 1
-                else:
-                    fp += 1
+    for i in range(start_testing_example_number, stop_testing_example_number):
+        image_batch.append(FilteringDataLoader.get_image(data[i][1], 600))
+        label_batch.append(FilteringDataLoader.get_image(data[i][2], 600))
+
+    test_pictures, labels = FilteringDataLoader.split_image(window_size, image_batch, label_batch, 15)
+    results = model.model.predict(test_pictures)
+
+    for j in range(len(results)):
+        if results[j][0] == 1 and results[j][1] == 0:  # negative
+            if labels[j][0] == 1 and labels[j][1] == 0:
+                tn += 1
+            else:
+                fn += 1
+        else:  # positive
+            if labels[j][0] == 0 and labels[j][1] == 1:
+                tp += 1
+            else:
+                fp += 1
 
     print('=============================================')
     print('|  p/e      |    positive   |   negative    |')
