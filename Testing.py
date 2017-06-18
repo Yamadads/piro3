@@ -17,6 +17,7 @@ def display_first_test():
     # DataLoader.show_image(testing_image)
     DataLoader.show_image(network_solution)
     DataLoader.show_image(reference_solution)
+    DataLoader.save_image(network_solution, './results/result1.tif')
 
 
 def main():

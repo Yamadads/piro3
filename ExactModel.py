@@ -15,10 +15,11 @@ class Model:
         self.model = Sequential()
 
     def init_model(self):
+        # model _ 1 wagi _22
         input_shape = (20, 20, 3)
         padding = 'valid'
         activation = 'relu'
-
+        #
         self.model = Sequential()
         self.model.add(Conv2D(32, kernel_size=(3, 3), input_shape=input_shape, padding=padding, activation=activation))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -29,9 +30,26 @@ class Model:
         self.model.add(Dense(100, activation=activation))
         self.model.add(Dense(60, activation=activation))
         self.model.add(Dense(2, activation='softmax'))
-
-        # sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.5)
         self.model.compile(loss=losses.categorical_crossentropy, optimizer=optimizers.Adadelta(), metrics=["accuracy"])
+
+        # model 2 wagi 23
+        # input_shape = (20, 20, 3)
+        # padding = 'valid'
+        # activation = 'relu'
+        #
+        # self.model = Sequential()
+        # self.model.add(Conv2D(32, kernel_size=(3, 3), input_shape=input_shape, padding=padding, activation=activation))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        # self.model.add(Dropout(0.2))
+        # self.model.add(Conv2D(50, kernel_size=(4, 4), padding=padding, activation=activation))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        # self.model.add(Conv2D(50, kernel_size=(3, 3), padding=padding, activation=activation))
+        # self.model.add(Flatten())
+        # self.model.add(Dense(100, activation=activation))
+        # self.model.add(Dense(2, activation='softmax'))
+        #
+        # sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9)
+        # self.model.compile(loss=losses.categorical_crossentropy, optimizer=sgd, metrics=["accuracy"])
         # self.model.compile(optimizer='Adam', loss='mean_squared_error')
         # self.set_random_weights()
 
@@ -75,4 +93,4 @@ class Model:
         else:
             print('Model weights cannot be loaded')
         # sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.5)
-        self.model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=["accuracy"])
+        # self.model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=["accuracy"])
