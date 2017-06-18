@@ -3,6 +3,7 @@ import DataLoader
 import FilteringModel
 import ExactModel
 import cv2
+from  skimage.filters import median
 from skimage.morphology import erosion, dilation, opening, closing, white_tophat, opening
 
 
@@ -53,41 +54,24 @@ def roads(image):
     exact_result = np.zeros((len(exact_image), len(exact_image)), dtype=int)
 
     print('predict')
+    patches = []
     for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
-        patches = []
         for j in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
             patch = get_patch(exact_image, i, j, exact_window_size, exact_window_decision_kernel_size)
             patches.append(patch)
-        patches = np.array(patches)
-        res = exact_model.model.predict(patches)
+    patches = np.array(patches)
+    res = exact_model.model.predict(patches)
+    idx = -1
+    for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
         for j in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
-            single_res = res[j]
+            idx += 1
+            single_res = res[idx]
             if single_res[1] > 0.5 or single_res[0] > 0.5:
-                dec = 1 if single_res[1] > res[0] else 0
+                dec = 1 if single_res[1] > single_res[0] else 0
             else:
                 dec = 0
             for x in range(exact_window_decision_kernel_size):
                 for y in range(exact_window_decision_kernel_size):
                     exact_result[x + i][y + j] = dec
-
     im_gray = exact_result * 255
-
-    #
-    # ret, thresh = cv2.threshold(im_gray.astype(np.uint8), 127, 255, 0)
-    # nb_edges, output, stats, _ = cv2.connectedComponentsWithStats(thresh, connectivity=8)
-    # size = stats[1:, -1]
-    # result = thresh
-    # for e in range(0, nb_edges - 1):
-    #     if size[e] >= 20:
-    #         th_up = e + 2
-    #         th_do = th_up
-    #
-    #         mask = cv2.inRange(output, th_do, th_up)
-    #         result = cv2.bitwise_xor(result, mask)
-
-    # im_gray = dilation(im_gray)
-    # ret, thresh = cv2.threshold(im_gray.astype(np.uint8), 127, 255, 0)
-    # im2, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    # print("contours {0}".format(len(contours)))
-    # cv2.drawContours(im_gray, contours, -1, (0, 255, 0), 3)
     return im_gray
