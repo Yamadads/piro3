@@ -25,7 +25,7 @@ def filter_testing(images_dir, labels_dir, window_size, start_testing_example_nu
         print("pic num: {0}, name: {1}".format(i, data[i][0]))
         image = FilteringDataLoader.get_image(data[i][1], 600)
         label = FilteringDataLoader.get_image(data[i][2], 600)
-        test_pictures, labels = FilteringDataLoader.split_image(window_size, image, label, 15)
+        test_pictures, labels = FilteringDataLoader.split_image(window_size, [image], [label], 15)
         results = model.model.predict(test_pictures)
 
         for j in range(len(results)):
@@ -45,7 +45,7 @@ def filter_testing(images_dir, labels_dir, window_size, start_testing_example_nu
     print('|-----------|---------------|---------------|')
     print('|  positive |      {0}      |      {1}      |'.format(tp, fp))
     print('|-----------|---------------|---------------|')
-    print('| negative  |      {0}      |      {1}      |'.format(fp, tn))
+    print('| negative  |      {0}      |      {1}      |'.format(fn, tn))
     print('=============================================')
 
 
@@ -55,7 +55,7 @@ def main():
     model_weights_name = "filter_net_1_weights_1"
     window_size = 60  # must be odd
     start = 0
-    stop = 1
+    stop = 30
 
     filter_testing(learning_files_path, learning_labels_path, window_size, start, stop,
                    model_weights_name)
