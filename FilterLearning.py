@@ -33,7 +33,7 @@ def main():
     model_weights_name = "filter_net_1_weights_1"
     window_size = 60  # must be odd
     start = 0
-    stop = 1
+    stop = 480
     batch_size = 32
     epochs = 4
 

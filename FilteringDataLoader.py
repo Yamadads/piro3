@@ -42,20 +42,20 @@ def split_image(picture_window_size, input_image, output_image, patch_step):
     patches = []
     labels = []
 
-    for i in range(half_window_size, patch_step, len(input_image) - 1 - half_window_size):
-        for j in range(half_window_size, patch_step, len(input_image[0]) - 1 - half_window_size):
+    for i in range(half_window_size, len(input_image) - 1 - half_window_size, patch_step):
+        for j in range(half_window_size, len(input_image[0]) - 1 - half_window_size, patch_step):
 
             patch = input_image[
-                    i - half_window_size:i + half_window_size,
-                    j - half_window_size:j + half_window_size
-                    ]
+                i - half_window_size:i + half_window_size,
+                j - half_window_size:j + half_window_size
+            ]
 
             patches.append(patch)
 
             label_patch = output_image[
-                          i - half_window_size:i + half_window_size,
-                          j - half_window_size:j + half_window_size
-                          ]
+                i - half_window_size:i + half_window_size,
+                j - half_window_size:j + half_window_size
+            ]
 
             class_id = 1 if np.sum(label_patch) > 0 else 0
 
