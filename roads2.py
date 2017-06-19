@@ -2,9 +2,6 @@ import numpy as np
 import DataLoader
 import FilteringModel
 import ExactModel
-import cv2
-from  skimage.filters import median
-from skimage.morphology import erosion, dilation, opening, closing, white_tophat, opening
 
 
 def get_exact_patch(input_image, i, j, window_size, decision_size, ):
@@ -57,14 +54,14 @@ def get_filter_result(compressed_image):
     filter_patches = get_filter_patches(compressed_image, filtering_window_size)
     results = filter_model.model.predict(filter_patches)
 
-    idx = -1
-    for i in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
-        for j in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
-            idx += 1
-            if results[idx][0] == 0 and results[idx][1] == 1:
-                for x in range(60):
-                    for y in range(60):
-                        filter_result[x+i][y+j] = 1.0
+    steps = int((len(compressed_image) - filtering_window_size + 1) / filtering_window_size)
+
+    for i in range(steps):
+        for j in range(steps):
+            if results[i][0] < 0.5 < results[i][1]:
+                for x in range(filtering_window_size):
+                    for y in range(filtering_window_size):
+                        filter_result[x+i*filtering_window_size][y+j**filtering_window_size] = 1.0
 
     return filter_result
 
@@ -77,7 +74,6 @@ def roads(image):
 
     exact_image = DataLoader.get_compressed_image(image, 600)
     exact_image = exact_image / 255
-
 
     filtering_image = DataLoader.get_compressed_image(image, 600)
     filtering_image = filtering_image / 255
