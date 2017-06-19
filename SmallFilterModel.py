@@ -17,7 +17,7 @@ class Model:
         input_shape = (20, 20, 3)
         padding = 'valid'
         activation = 'relu'
-        #
+
         self.model = Sequential()
         self.model.add(Conv2D(32, kernel_size=(3, 3), input_shape=input_shape, padding=padding, activation=activation))
         self.model.add(MaxPooling2D(pool_size=(2, 2)))
