@@ -9,7 +9,7 @@ learning_labels_path = './labels/'
 
 
 def display_first_test():
-    test_image_no = 100
+    test_image_no = 2
     data = DataLoader.get_images_names_list(learning_files_path, learning_labels_path)
     testing_image = DataLoader.get_image(data[test_image_no][1])
     reference_solution = DataLoader.get_image(data[test_image_no][2])

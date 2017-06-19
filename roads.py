@@ -1,7 +1,7 @@
 import numpy as np
 import DataLoader
 import Model
-
+import Postprocessing
 
 def get_exact_patch(input_image, i, j, window_size, decision_size):
     window_size_half = int(window_size / 2)
@@ -115,6 +115,6 @@ def roads(image):
 
     filtered_image = get_filter_result(compressed_image)
     exact_result = get_exact_result(compressed_image, filtered_image)
-
-    exact_result *= 255
-    return exact_result
+    # exact_result *= 255
+    processed_image = Postprocessing.process_image(exact_result)
+    return processed_image

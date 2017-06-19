@@ -1,9 +1,8 @@
-import os, sys
-from skimage import data, io
+import os
+from skimage import data
 from PIL import Image
 import numpy as np
 import random
-from sklearn.feature_extraction import image
 import scipy
 from sklearn.utils import shuffle
 from keras.utils.np_utils import to_categorical
