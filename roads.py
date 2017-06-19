@@ -68,7 +68,7 @@ def get_filter_result(compressed_image):
         for j in range(0, len(compressed_image) - filtering_window_size + 1, filtering_window_size):
             idx += 1
             single_res = results[idx]
-            if single_res[0] > 0.7 and single_res[1] < 0.4:
+            if single_res[0] > 0.90 and single_res[1] < 0.2:
                 dec = 0
             else:
                 dec = 1
