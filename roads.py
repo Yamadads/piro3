@@ -1,7 +1,6 @@
 import numpy as np
 import DataLoader
-import SmallFilterModel
-import ExactModel
+import Model
 
 
 def get_exact_patch(input_image, i, j, window_size, decision_size):
@@ -56,7 +55,7 @@ def get_filter_result(compressed_image):
     filtering_model_weights_name = "small_filter_net_1_weights_1"
     filtering_window_size = 20
 
-    filter_model = SmallFilterModel.Model()
+    filter_model = Model.Model()
     filter_model.init_model()
     filter_model.load_weights(filtering_model_weights_name)
     filter_result = np.zeros((len(compressed_image), len(compressed_image[0])))
@@ -85,7 +84,7 @@ def get_exact_result(compressed_image, filtered_image):
     exact_model_weights_name = "exact_net_1_weights_22"
     exact_window_size = 20
     exact_window_decision_kernel_size = 2
-    exact_model = ExactModel.Model()
+    exact_model = Model.Model()
     exact_model.init_model()
     exact_model.load_weights(exact_model_weights_name)
     exact_result = np.zeros((len(compressed_image), len(compressed_image)), dtype=int)

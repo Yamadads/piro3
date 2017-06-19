@@ -21,7 +21,7 @@ def get_image(path):
     return image
 
 
-def split_image(picture_window_size, center_size, input_image, output_image, set_size):
+def split_image_exact(picture_window_size, center_size, input_image, output_image, set_size):
     half_window_size = int(picture_window_size / 2)
     half_center_size = int(center_size / 2)
     center_start_pos = half_window_size - half_center_size
@@ -51,6 +51,37 @@ def split_image(picture_window_size, center_size, input_image, output_image, set
                 labels.append(to_categorical(label, 2)[0])
     s_patches, s_labels = shuffle(patches, labels)
     return np.array(s_patches), np.array(s_labels)
+
+
+def split_image_filter(picture_window_size, center_size, input_image, output_image, set_size):
+    half_window_size = int(picture_window_size / 2)
+    half_center_size = int(center_size / 2)
+    half_set_size = int(set_size / 2)
+    center_start_pos = half_window_size - half_center_size
+    true_patches = []
+    false_patches = []
+    true_labels = []
+    false_labels = []
+
+    while (len(true_patches) < half_set_size or len(false_patches) < half_set_size):
+        i = random.randint(0, len(input_image) - picture_window_size)
+        j = random.randint(0, len(input_image) - picture_window_size)
+        patch = input_image[i:i + picture_window_size, j:j + picture_window_size]
+        label_patch = output_image[i:i + picture_window_size, j:j + picture_window_size]
+        if np.sum(label_patch) > 1:
+            true_patches.append(patch)
+            label = 1
+            true_labels.append(to_categorical(label, 2)[0])
+        else:
+            false_patches.append(patch)
+            label = 0
+            false_labels.append(to_categorical(label, 2)[0])
+    result_patches, result_labels = shuffle(
+        true_patches[:half_set_size] + false_patches[:half_set_size]
+        , true_labels[:half_set_size] + false_labels[:half_set_size]
+    )
+
+    return np.array(result_patches), np.array(result_labels)
 
 
 def get_compressed_image(image, final_size):

@@ -1,6 +1,6 @@
-import SmallFilterDataLoader
+import DataLoader
 import numpy as np
-import SmallFilterModel
+import Model
 
 seed = 7
 np.random.seed(seed)
@@ -9,20 +9,20 @@ np.random.seed(seed)
 def learn(images_dir, labels_dir, compressed_image_size, decision_kernel_size, window_size, patch_size, start_learning_example_number, stop_learning_example_number,
           batch_size, epochs, model_name, model_weights_name):
     # load paths
-    data = SmallFilterDataLoader.get_images_names_list(images_dir, labels_dir)
+    data = DataLoader.get_images_names_list(images_dir, labels_dir)
 
     # load current model
-    model = SmallFilterModel.Model()
+    model = Model.Model()
     model.init_model()
     model.load_weights(model_weights_name)
 
     # learn
     for i in range(start_learning_example_number, stop_learning_example_number):
         print("pic num: {0}, name: {1}".format(i, data[i][0]))
-        image = SmallFilterDataLoader.get_image(data[i][1])
-        compressed_image = SmallFilterDataLoader.get_compressed_image(image, compressed_image_size)
-        label = SmallFilterDataLoader.get_compressed_image(SmallFilterDataLoader.get_image(data[i][2]), compressed_image_size)
-        train_pictures, labels = SmallFilterDataLoader.split_image(window_size, decision_kernel_size, compressed_image, label, patch_size)
+        image = DataLoader.get_image(data[i][1])
+        compressed_image = DataLoader.get_compressed_image(image, compressed_image_size)
+        label = DataLoader.get_compressed_image(DataLoader.get_image(data[i][2]), compressed_image_size)
+        train_pictures, labels = DataLoader.split_image_filter(window_size, decision_kernel_size, compressed_image, label, patch_size)
         model.train_model(train_pictures, labels, batch_size, epochs)
         model.save_model(model_name, model_weights_name)
 

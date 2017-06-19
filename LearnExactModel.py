@@ -1,6 +1,6 @@
 import DataLoader
 import numpy as np
-import ExactModel
+import Model
 
 seed = 7
 np.random.seed(seed)
@@ -12,7 +12,7 @@ def learn(images_dir, labels_dir, compressed_image_size, decision_kernel_size, w
     data = DataLoader.get_images_names_list(images_dir, labels_dir)
 
     # load current model
-    model = ExactModel.Model()
+    model = Model.Model()
     model.init_model()
     model.load_weights(model_weights_name)
 
@@ -22,7 +22,7 @@ def learn(images_dir, labels_dir, compressed_image_size, decision_kernel_size, w
         image = DataLoader.get_image(data[i][1])
         compressed_image = DataLoader.get_compressed_image(image, compressed_image_size)
         label = DataLoader.get_compressed_image(DataLoader.get_image(data[i][2]), compressed_image_size)
-        train_pictures, labels = DataLoader.split_image(window_size, decision_kernel_size, compressed_image, label, patch_size)
+        train_pictures, labels = DataLoader.split_image_exact(window_size, decision_kernel_size, compressed_image, label, patch_size)
         model.train_model(train_pictures, labels, batch_size, epochs)
         model.save_model(model_name, model_weights_name)
 
