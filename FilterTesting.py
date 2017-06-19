@@ -30,7 +30,7 @@ def filter_testing(images_dir, labels_dir, window_size, start_testing_example_nu
 
     test_pictures, labels = FilteringDataLoader.split_image(window_size, image_batch, label_batch, 15)
     results = model.model.predict(test_pictures)
-
+    print(results)
     for j in range(len(results)):
         if results[j][0] == 1 and results[j][1] == 0:  # negative
             if labels[j][0] == 1 and labels[j][1] == 0:

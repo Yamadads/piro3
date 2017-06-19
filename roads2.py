@@ -56,12 +56,18 @@ def get_filter_result(compressed_image):
 
     filter_patches = get_filter_patches(compressed_image, filtering_window_size)
     results = filter_model.model.predict(filter_patches)
+    print(results)
 
     idx = -1
     for i in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
         for j in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
             idx += 1
-            if results[idx][0] == 0 and results[idx][1] == 1:
+            single_res = results[idx]
+            if single_res[1] > 0.5 or single_res[0] > 0.5:
+                dec = 1 if single_res[1] > single_res[0] else 0
+            else:
+                dec = 1
+            if dec == 1:
                 for x in range(60):
                     for y in range(60):
                         filter_result[x+i][y+j] = 1.0
@@ -83,7 +89,7 @@ def roads(image):
     filtering_image = filtering_image / 255
 
     filtered_image = get_filter_result(filtering_image)
-    to_show_filtered_image = filtered_image / 255
+    to_show_filtered_image = filtered_image * 255
     DataLoader.show_image(to_show_filtered_image)
 
     exact_model = ExactModel.Model()
