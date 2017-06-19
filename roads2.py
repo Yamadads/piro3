@@ -1,21 +1,27 @@
 import numpy as np
 import DataLoader
-import FilteringModel
 import SmallFilterModel
 import ExactModel
 
 
-def get_exact_patch(input_image, i, j, window_size, decision_size, ):
+def get_exact_patch(input_image, i, j, window_size, decision_size):
     window_size_half = int(window_size / 2)
     decision_size_half = int(decision_size / 2)
+    win_h_min_dec_h = window_size_half - decision_size_half
+    if (i > win_h_min_dec_h) and (j > win_h_min_dec_h) and (i < len(input_image) - window_size_half) and (
+                j < len(input_image) - window_size_half):
+        return input_image[
+               i - win_h_min_dec_h: i - win_h_min_dec_h + window_size,
+               j - win_h_min_dec_h: j - win_h_min_dec_h + window_size]
+
     patch = np.ones((window_size, window_size, 3))
     p_x = -1
-    for x in range(i - (window_size_half - decision_size_half),
-                   i - (window_size_half - decision_size_half) + window_size):
+    for x in range(i - (win_h_min_dec_h),
+                   i - (win_h_min_dec_h) + window_size):
         p_y = -1
         p_x += 1
-        for y in range(j - (window_size_half - decision_size_half),
-                       j - (window_size_half - decision_size_half) + window_size):
+        for y in range(j - win_h_min_dec_h,
+                       j - win_h_min_dec_h + window_size):
             p_y += 1
             if (x >= 0 and x < len(input_image)) and (y >= 0 and y < len(input_image)):
                 patch[p_x][p_y][0] = input_image[x][y][0]
@@ -57,7 +63,6 @@ def get_filter_result(compressed_image):
 
     filter_patches = get_filter_patches(compressed_image, filtering_window_size)
     results = filter_model.model.predict(filter_patches)
-    # print(results)
 
     idx = -1
     for i in range(0, len(compressed_image) - filtering_window_size + 1, filtering_window_size):
