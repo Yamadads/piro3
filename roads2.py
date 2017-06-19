@@ -1,6 +1,7 @@
 import numpy as np
 import DataLoader
 import FilteringModel
+import SmallFilterModel
 import ExactModel
 import cv2
 from  skimage.filters import median
@@ -29,80 +30,72 @@ def get_exact_patch(input_image, i, j, window_size, decision_size, ):
 
 def get_filter_patches(image, filter_window_size):
     patches = []
-    for i in range(0, len(image) - filter_window_size +1, filter_window_size):
-        for j in range(0, len(image) - filter_window_size +1, filter_window_size):
+    for i in range(0, len(image) - filter_window_size + 1, filter_window_size):
+        for j in range(0, len(image) - filter_window_size + 1, filter_window_size):
             patch = image[i:i + filter_window_size, j:j + filter_window_size]
             patches.append(patch)
     return np.array(patches)
 
 
-def get_exact_patches(image, exact_window_size, exact_window_decision_kernel_size):
+def get_exact_patches(image, exact_window_size, exact_window_decision_kernel_size, filter):
     patches = []
     for i in range(0, len(image) - exact_window_decision_kernel_size + 1, 2):
         for j in range(0, len(image) - exact_window_decision_kernel_size + 1, 2):
+            if filter[i][j] == 0.0:
+                continue
             patch = get_exact_patch(image, i, j, exact_window_size, exact_window_decision_kernel_size)
             patches.append(patch)
     patches = np.array(patches)
     return patches
 
-def get_filter_result(compressed_image):
-    filtering_model_weights_name = "filter_net_1_weights_1"
-    filtering_window_size = 60
 
-    filter_model = FilteringModel.FilteringModel()
+def get_filter_result(compressed_image):
+    filtering_model_weights_name = "small_filter_net_1_weights_1"
+    filtering_window_size = 20
+
+    filter_model = SmallFilterModel.Model()
     filter_model.init_model()
     filter_model.load_weights(filtering_model_weights_name)
     filter_result = np.zeros((len(compressed_image), len(compressed_image[0])))
 
     filter_patches = get_filter_patches(compressed_image, filtering_window_size)
     results = filter_model.model.predict(filter_patches)
-    print(results)
+    # print(results)
 
     idx = -1
-    for i in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
-        for j in range(0, len(compressed_image) - filtering_window_size +1, filtering_window_size):
+    for i in range(0, len(compressed_image) - filtering_window_size + 1, filtering_window_size):
+        for j in range(0, len(compressed_image) - filtering_window_size + 1, filtering_window_size):
             idx += 1
             single_res = results[idx]
-            if single_res[1] > 0.5 or single_res[0] > 0.5:
-                dec = 1 if single_res[1] > single_res[0] else 0
+            if single_res[0] > 0.7 and single_res[1] < 0.4:
+                dec = 0
             else:
                 dec = 1
             if dec == 1:
-                for x in range(60):
-                    for y in range(60):
-                        filter_result[x+i][y+j] = 1.0
+                for x in range(filtering_window_size):
+                    for y in range(filtering_window_size):
+                        filter_result[x + i][y + j] = 1.0
 
     return filter_result
 
-def roads(image):
-    # model
-    exact_model_name = "exact_net_1"
+
+def get_exact_result(compressed_image, filtered_image):
     exact_model_weights_name = "exact_net_1_weights_22"
     exact_window_size = 20
     exact_window_decision_kernel_size = 2
-
-    exact_image = DataLoader.get_compressed_image(image, 600)
-    exact_image = exact_image / 255
-
-
-    filtering_image = DataLoader.get_compressed_image(image, 600)
-    filtering_image = filtering_image / 255
-
-    filtered_image = get_filter_result(filtering_image)
-    to_show_filtered_image = filtered_image * 255
-    DataLoader.show_image(to_show_filtered_image)
-
     exact_model = ExactModel.Model()
     exact_model.init_model()
     exact_model.load_weights(exact_model_weights_name)
-    exact_result = np.zeros((len(exact_image), len(exact_image)), dtype=int)
+    exact_result = np.zeros((len(compressed_image), len(compressed_image)), dtype=int)
 
-    print('predict')
-    patches = get_exact_patches(exact_image, exact_window_size, exact_window_decision_kernel_size)
+    patches = get_exact_patches(compressed_image, exact_window_size, exact_window_decision_kernel_size, filtered_image)
     res = exact_model.model.predict(patches)
+
     idx = -1
-    for i in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
-        for j in range(0, len(exact_image) - exact_window_decision_kernel_size + 1, 2):
+    for i in range(0, len(compressed_image) - exact_window_decision_kernel_size + 1, 2):
+        for j in range(0, len(compressed_image) - exact_window_decision_kernel_size + 1, 2):
+            if filtered_image[i][j] == 0:
+                continue
             idx += 1
             single_res = res[idx]
             if single_res[1] > 0.5 or single_res[0] > 0.5:
@@ -112,5 +105,15 @@ def roads(image):
             for x in range(exact_window_decision_kernel_size):
                 for y in range(exact_window_decision_kernel_size):
                     exact_result[x + i][y + j] = dec
-    im_gray = exact_result * 255
-    return im_gray
+    return exact_result
+
+
+def roads(image):
+    compressed_image = DataLoader.get_compressed_image(image, 600)
+    compressed_image = compressed_image / 255
+
+    filtered_image = get_filter_result(compressed_image)
+    exact_result = get_exact_result(compressed_image, filtered_image)
+
+    exact_result *= 255
+    return exact_result
