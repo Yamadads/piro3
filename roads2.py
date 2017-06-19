@@ -3,9 +3,6 @@ import DataLoader
 import FilteringModel
 import SmallFilterModel
 import ExactModel
-import cv2
-from  skimage.filters import median
-from skimage.morphology import erosion, dilation, opening, closing, white_tophat, opening
 
 
 def get_exact_patch(input_image, i, j, window_size, decision_size, ):
